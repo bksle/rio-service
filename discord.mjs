@@ -765,20 +765,9 @@ export class DiscordAccount {
     if (details) activity.details = details;
     if (state) activity.state = state;
     if (type === 1) { activity.url = 'https://www.twitch.tv/discord'; }
-    // Discord Rich Presence images:
-    // Raw URLs don't work. Must use mp:external/ prefix for Discord's image proxy.
-    // Format: mp:external/HASH/url — but easiest is to use an application_id with registered assets.
-    // For custom images, we use a known app ID and pass the URL through Discord's proxy format.
-    if (imageUrl) {
-      // Convert URL to Discord's external image proxy format
-      // Strip protocol, Discord proxies it as mp:external/<base64-ish>/domain/path
-      const cleanUrl = imageUrl.replace(/^https?:\/\//, '');
-      activity.assets = {
-        large_image: `mp:external/${cleanUrl}`,
-        large_text: name,
-      };
-      if (details) activity.assets.small_text = details;
-    }
+    // Discord Rich Presence images ONLY work with registered application assets.
+    // Raw URLs (imgur etc) do NOT work — Discord ignores them.
+    // Images show automatically when the activity name matches a known Discord game/app.
 
     // set user status if provided (online/idle/dnd/invisible)
     if (status) this.gateway._userStatus = status;

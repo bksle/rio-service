@@ -598,10 +598,10 @@ input::placeholder{color:var(--t4)}
               </div>
               <div class="fg" style="flex:1"><label>الوقت المنقضي (دقيقة)</label><input type="number" id="csElapsed" value="0" min="0" max="99999" placeholder="0 = يبدأ من الحين"></div>
             </div>
-            <div class="fg"><label>رابط صورة (للاكتفتي)</label><input type="url" id="csImage" placeholder="https://i.imgur.com/xxx.png" dir="ltr"></div>
             <div style="padding:8px;background:rgba(var(--pri-rgb),.04);border:1px solid var(--bdr);border-radius:var(--rad-sm);font-size:10px;color:var(--t4);line-height:1.6">
-              💡 الوقت المنقضي: مثلا حط 180 يبين "3 ساعات" كأنك شغالها من قبل<br>
-              💡 الصورة: حط رابط مباشر (png/jpg) وتبين بالاكتفتي
+              💡 <b>الوقت المنقضي:</b> مثلا حط 180 يبين "3 ساعات" كأنك شغالها من قبل<br>
+              💡 <b>الشعار:</b> اذا كتبت اسم لعبة/تطبيق معروف (VALORANT, Netflix, YouTube...) ديسكورد يحط شعارها تلقائي<br>
+              💡 <b>صور مخصصة:</b> ديسكورد يرفض الروابط — الشعار يبين بس للتطبيقات المعروفة
             </div>
           </div>
           <div class="brow" style="margin-top:8px">
@@ -1076,7 +1076,7 @@ async function refreshActiveSessions(){
 
 async function startCustomSess(){
   const name=$('csName').value.trim();if(!name){toast('اكتب اسم','error');return}
-  const r=await api('POST','/api/custom-session',{token:T,name,details:$('csDetails').value.trim(),state:$('csState').value.trim(),type:+$('csType').value,duration:+$('csDur').value||60,status:$('csStatus').value,image_url:$('csImage')?.value?.trim()||'',elapsed_min:+$('csElapsed')?.value||0});
+  const r=await api('POST','/api/custom-session',{token:T,name,details:$('csDetails').value.trim(),state:$('csState').value.trim(),type:+$('csType').value,duration:+$('csDur').value||60,status:$('csStatus').value,elapsed_min:+$('csElapsed')?.value||0});
   if(r.error)toast(r.error,'error');else toast('جلسة: '+name,'success');
 }
 
