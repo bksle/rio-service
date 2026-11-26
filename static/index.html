@@ -587,7 +587,7 @@ input::placeholder{color:var(--t4)}
             <div class="fg"><label>التفاصيل</label><input type="text" id="csDetails" placeholder="Survival Mode..."></div>
             <div class="fg"><label>الحالة</label><input type="text" id="csState" placeholder="Playing with friends..."></div>
             <div style="display:flex;gap:6px">
-              <div class="fg" style="flex:1"><label>المدة</label><input type="number" id="csDur" value="60" min="1" max="99999"></div>
+              <div class="fg" style="flex:1"><label>المدة (دقيقة)</label><input type="number" id="csDur" value="60" min="1" max="99999"></div>
               <div class="fg" style="flex:1"><label>النوع</label>
                 <select id="csType"><option value="0">Playing</option><option value="1">Streaming</option><option value="2">Listening</option><option value="3">Watching</option><option value="5">Competing</option></select>
               </div>
@@ -596,7 +596,12 @@ input::placeholder{color:var(--t4)}
               <div class="fg" style="flex:1"><label>Status</label>
                 <select id="csStatus"><option value="online">Online</option><option value="idle">Idle</option><option value="dnd">DND</option><option value="invisible">Invisible</option></select>
               </div>
-              <div class="fg" style="flex:1"><label>رابط صورة</label><input type="url" id="csImage" placeholder="https://..." dir="ltr"></div>
+              <div class="fg" style="flex:1"><label>الوقت المنقضي (دقيقة)</label><input type="number" id="csElapsed" value="0" min="0" max="99999" placeholder="0 = يبدأ من الحين"></div>
+            </div>
+            <div class="fg"><label>رابط صورة (للاكتفتي)</label><input type="url" id="csImage" placeholder="https://i.imgur.com/xxx.png" dir="ltr"></div>
+            <div style="padding:8px;background:rgba(var(--pri-rgb),.04);border:1px solid var(--bdr);border-radius:var(--rad-sm);font-size:10px;color:var(--t4);line-height:1.6">
+              💡 الوقت المنقضي: مثلا حط 180 يبين "3 ساعات" كأنك شغالها من قبل<br>
+              💡 الصورة: حط رابط مباشر (png/jpg) وتبين بالاكتفتي
             </div>
           </div>
           <div class="brow" style="margin-top:8px">
@@ -965,7 +970,7 @@ async function claimAD(){
 async function refreshB(){const r=await api('GET','/api/badges?token='+encodeURIComponent(T));if(r.error)return;const bl=$('bList');if(!r.badges?.length){bl.innerHTML='<div class="empty">لا توجد شارات</div>';return}bl.innerHTML=r.badges.map(b=>'<span class="bdg">'+esc(b.name)+'</span>').join('')}
 
 let gamesList=[];
-async function loadGames(){const r=await api('GET','/api/games');gamesList=r.games||[];const o=gamesList.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('')+'<option value="__c">مخصصة...</option>';$('gSel').innerHTML=o;$('stG').innerHTML=o}
+async function loadGames(){const r=await api('GET','/api/games');gamesList=r.games||[];const apps=['Netflix','YouTube','Spotify','Crunchyroll','Disney+','Twitch'];const gms=gamesList.filter(x=>!apps.includes(x));const o='<optgroup label="العاب">'+gms.map(x=>'<option value="'+esc(x)+'">'+esc(x)+'</option>').join('')+'</optgroup><optgroup label="تطبيقات">'+apps.filter(x=>gamesList.includes(x)).map(x=>'<option value="'+esc(x)+'">'+({Netflix:'🎬 Netflix',YouTube:'▶️ YouTube',Spotify:'🎵 Spotify',Crunchyroll:'🍥 Crunchyroll','Disney+':'🏰 Disney+',Twitch:'📡 Twitch'}[x]||x)+'</option>').join('')+'</optgroup><option value="__c">✏️ مخصصة...</option>';$('gSel').innerHTML=o;$('stG').innerHTML=o}
 async function startSess(){let g=$('gSel').value;if(g==='__c')g=prompt('اسم اللعبة:')||'Custom';const st=$('sStatus')?.value||'online';if(st!=='online')await api('POST','/api/set-status',{token:T,status:st});const r=await api('POST','/api/session',{token:T,game:g,duration:+$('sDur').value||30,streaming:$('sType').value==='stream'});if(r.error)toast(r.error,'error');else toast((r.streaming?'بث: ':'يلعب: ')+r.game,'success')}
 async function stopSess(){await api('POST','/api/stop-session',{token:T});toast('تم','success')}
 async function startStr(){let g=$('stG').value;if(g==='__c')g=prompt('اسم:')||'Streaming';const r=await api('POST','/api/stream',{token:T,game:g,duration:+$('stD').value||60});if(r.error)toast(r.error,'error');else toast('بث: '+r.game,'success')}
@@ -1071,7 +1076,7 @@ async function refreshActiveSessions(){
 
 async function startCustomSess(){
   const name=$('csName').value.trim();if(!name){toast('اكتب اسم','error');return}
-  const r=await api('POST','/api/custom-session',{token:T,name,details:$('csDetails').value.trim(),state:$('csState').value.trim(),type:+$('csType').value,duration:+$('csDur').value||60,status:$('csStatus').value,image_url:$('csImage')?.value?.trim()||''});
+  const r=await api('POST','/api/custom-session',{token:T,name,details:$('csDetails').value.trim(),state:$('csState').value.trim(),type:+$('csType').value,duration:+$('csDur').value||60,status:$('csStatus').value,image_url:$('csImage')?.value?.trim()||'',elapsed_min:+$('csElapsed')?.value||0});
   if(r.error)toast(r.error,'error');else toast('جلسة: '+name,'success');
 }
 

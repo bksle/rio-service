@@ -178,14 +178,16 @@ class Gateway {
     const activities = [];
     if (game) {
       const now = Date.now();
+      // Use game.type if defined (e.g. Netflix=3/Watching, Spotify=2/Listening)
+      const actType = streaming ? 1 : (game.type || type);
       const a = {
         name: game.name,
-        type: streaming ? 1 : type,
+        type: actType,
         timestamps: { start: now },
         created_at: now, // real client sends this for game detection
       };
       if (game.id) a.application_id = game.id;
-      if (streaming) {
+      if (streaming || actType === 1) {
         a.url = 'https://www.twitch.tv/discord';
         a.state = 'Playing ' + game.name;
         a.details = 'Streaming';
@@ -750,22 +752,31 @@ export class DiscordAccount {
     return { success: true, game: game.name, streaming, duration_min: durationMin };
   }
 
-  async startCustomSession(name, details, state, type = 0, durationMin = 60, status = null, imageUrl = null) {
+  async startCustomSession(name, details, state, type = 0, durationMin = 60, status = null, imageUrl = null, elapsedMin = 0) {
     const now = Date.now();
+    // elapsed_min: fake how long the activity has been running (e.g. 180 = shows "3 hours elapsed")
+    const startTime = elapsedMin > 0 ? now - (elapsedMin * 60 * 1000) : now;
     const activity = {
       name,
       type: Number(type),
-      timestamps: { start: now },
+      timestamps: { start: startTime },
       created_at: now,
     };
     if (details) activity.details = details;
     if (state) activity.state = state;
     if (type === 1) { activity.url = 'https://www.twitch.tv/discord'; }
-    // Discord Rich Presence: for external images, use mp:external format
-    // Discord accepts direct URLs in large_image for activity type 0 since late 2023
+    // Discord Rich Presence images:
+    // Raw URLs don't work. Must use mp:external/ prefix for Discord's image proxy.
+    // Format: mp:external/HASH/url — but easiest is to use an application_id with registered assets.
+    // For custom images, we use a known app ID and pass the URL through Discord's proxy format.
     if (imageUrl) {
-      activity.assets = { large_image: imageUrl, large_text: name };
-      // also set small_image if details exist
+      // Convert URL to Discord's external image proxy format
+      // Strip protocol, Discord proxies it as mp:external/<base64-ish>/domain/path
+      const cleanUrl = imageUrl.replace(/^https?:\/\//, '');
+      activity.assets = {
+        large_image: `mp:external/${cleanUrl}`,
+        large_text: name,
+      };
       if (details) activity.assets.small_text = details;
     }
 
@@ -773,7 +784,7 @@ export class DiscordAccount {
     if (status) this.gateway._userStatus = status;
     this.gateway.setMultiActivity([activity], status);
     const statusNames = { online: 'متصل', idle: 'غائب', dnd: 'عدم الإزعاج', invisible: 'مخفي' };
-    this._log(`🎮 جلسة مخصصة: ${name} (${durationMin}د)${status ? ' — حالة: ' + (statusNames[status] || status) : ''}`);
+    this._log(`🎮 جلسة مخصصة: ${name} (${durationMin}د)${elapsedMin ? ' — ⏱ ' + elapsedMin + 'د مضت' : ''}${status ? ' — حالة: ' + (statusNames[status] || status) : ''}`);
 
     if (this._sessionTimer) clearTimeout(this._sessionTimer);
     this._sessionTimer = setTimeout(() => {
@@ -781,7 +792,7 @@ export class DiscordAccount {
       this._log(`⏹ انتهت الجلسة: ${name}`);
     }, durationMin * 60 * 1000);
 
-    return { success: true, name, details, state, type, duration_min: durationMin };
+    return { success: true, name, details, state, type, duration_min: durationMin, elapsed_min: elapsedMin };
   }
 
   clearActivity() {

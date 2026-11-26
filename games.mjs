@@ -39,6 +39,13 @@ export const GAME_LIBRARY = [
   { name: 'Monster Hunter: World',id: '432980957394370573' },
   { name: 'Cyberpunk 2077',       id: '548512854880419861' },
   { name: 'Red Dead Redemption 2',id: '356875221078245377' },
+  // ── streaming/watching apps (detected by Discord automatically) ──
+  { name: 'Netflix',              id: '926541425682829352', type: 3 },
+  { name: 'YouTube',              id: '880218394199220334', type: 3 },
+  { name: 'Spotify',              id: '971262093001523200', type: 2 },
+  { name: 'Crunchyroll',          id: '926541425682829353', type: 3 },
+  { name: 'Disney+',              id: '926541425682829354', type: 3 },
+  { name: 'Twitch',               id: '802958757909889054', type: 1 },
 ];
 
 export const HOUSE_NAMES = { 1: 'Bravery', 2: 'Brilliance', 3: 'Balance' };

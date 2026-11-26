@@ -260,9 +260,9 @@ app.get('/api/status', (_r, res) => {
 app.post('/api/custom-session', async (req, res) => {
   const acc = accounts.get(req.body.token);
   if (!acc) return res.status(401).json({ error: 'غير متصل' });
-  const { name, details, state, type, duration, status, image_url } = req.body;
+  const { name, details, state, type, duration, status, image_url, elapsed_min } = req.body;
   if (!name) return res.status(400).json({ error: 'اسم النشاط مطلوب' });
-  res.json(await acc.startCustomSession(name, details, state, type || 0, duration || 60, status, image_url));
+  res.json(await acc.startCustomSession(name, details, state, type || 0, duration || 60, status, image_url, elapsed_min || 0));
 });
 
 // ── stop everything ──────────────────────────────────────────
