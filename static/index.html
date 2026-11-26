@@ -327,6 +327,22 @@ input::placeholder{color:var(--t4)}
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           تعديل الحساب <span class="sb-tag sb-tag-new">جديد</span>
         </button>
+        <button class="sb-link" data-page="purge" onclick="goPage('purge')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          حذف رسائل <span class="sb-tag sb-tag-new">جديد</span>
+        </button>
+        <button class="sb-link" data-page="friends" onclick="goPage('friends')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          الاصدقاء <span class="sb-tag sb-tag-new">جديد</span>
+        </button>
+        <button class="sb-link" data-page="lookup" onclick="goPage('lookup')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          بحث يوزر <span class="sb-tag sb-tag-new">جديد</span>
+        </button>
+        <button class="sb-link" data-page="invites" onclick="goPage('invites')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          دعوات <span class="sb-tag sb-tag-new">جديد</span>
+        </button>
         <button class="sb-link" data-page="online" onclick="goPage('online')">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
           اونلاين 24/7
@@ -554,7 +570,7 @@ input::placeholder{color:var(--t4)}
           <div class="grid2" style="gap:8px">
             <div class="fg"><label>اللعبة</label><select id="gSel"></select></div>
             <div style="display:flex;gap:6px">
-              <div class="fg" style="flex:1"><label>المدة (دقيقة)</label><input type="number" id="sDur" value="30" min="1" max="1440"></div>
+              <div class="fg" style="flex:1"><label>المدة (دقيقة)</label><input type="number" id="sDur" value="30" min="1" max="99999"></div>
               <div class="fg" style="flex:1"><label>النوع</label><select id="sType"><option value="play">يلعب</option><option value="stream">يبث</option></select></div>
               <div class="fg" style="flex:1"><label>الحالة</label><select id="sStatus"><option value="online">متصل</option><option value="idle">غائب</option><option value="dnd">DND</option><option value="invisible">مخفي</option></select></div>
             </div>
@@ -571,7 +587,7 @@ input::placeholder{color:var(--t4)}
             <div class="fg"><label>التفاصيل</label><input type="text" id="csDetails" placeholder="Survival Mode..."></div>
             <div class="fg"><label>الحالة</label><input type="text" id="csState" placeholder="Playing with friends..."></div>
             <div style="display:flex;gap:6px">
-              <div class="fg" style="flex:1"><label>المدة</label><input type="number" id="csDur" value="60" min="1" max="1440"></div>
+              <div class="fg" style="flex:1"><label>المدة</label><input type="number" id="csDur" value="60" min="1" max="99999"></div>
               <div class="fg" style="flex:1"><label>النوع</label>
                 <select id="csType"><option value="0">Playing</option><option value="1">Streaming</option><option value="2">Listening</option><option value="3">Watching</option><option value="5">Competing</option></select>
               </div>
@@ -601,7 +617,7 @@ input::placeholder{color:var(--t4)}
           <div class="card-h">حالة بث</div>
           <div class="grid2" style="gap:8px">
             <div class="fg"><label>اللعبة</label><select id="stG"></select></div>
-            <div class="fg"><label>المدة (دقيقة)</label><input type="number" id="stD" value="60" min="1" max="1440"></div>
+            <div class="fg"><label>المدة (دقيقة)</label><input type="number" id="stD" value="60" min="1" max="99999"></div>
           </div>
           <div class="brow" style="margin-top:8px">
             <button class="btn btn-pri" onclick="startStr()">بدء البث</button>
@@ -615,7 +631,7 @@ input::placeholder{color:var(--t4)}
             <div class="fg"><label>السيرفر</label><select id="glGuild" onchange="loadGLVC()"></select></div>
             <div class="fg"><label>قناة الفويس</label><select id="glVC"></select></div>
           </div>
-          <div class="fg" style="margin-top:6px"><label>المدة (دقيقة)</label><input type="number" id="glDur" value="60" min="1" max="1440"></div>
+          <div class="fg" style="margin-top:6px"><label>المدة (دقيقة)</label><input type="number" id="glDur" value="60" min="1" max="99999"></div>
           <div class="brow" style="margin-top:8px">
             <button class="btn btn-pri" onclick="startGoLive()">بدء Go Live</button>
             <button class="btn btn-r" onclick="stopGoLive()">ايقاف</button>
@@ -685,7 +701,8 @@ input::placeholder{color:var(--t4)}
             <div class="fg"><label>الاسم</label><input type="text" id="whName" placeholder="Rio Service"></div>
             <div class="fg"><label>رابط الصورة</label><input type="url" id="whAvatar" placeholder="https://..." dir="ltr"></div>
           </div>
-          <div class="fg"><label>الرسالة</label><textarea id="whMsg" rows="3" placeholder="اكتب الرسالة..." style="resize:vertical"></textarea></div>
+          <div class="fg"><label>الرسالة</label><textarea id="whMsg" rows="3" placeholder="اكتب الرسالة... (روابط الصور تتحول لامبد تلقائي)" style="resize:vertical"></textarea></div>
+          <div class="fg"><label>رابط صورة (امبد)</label><input type="url" id="whImage" placeholder="https://i.imgur.com/xxx.png" dir="ltr"></div>
           <div class="brow">
             <button class="btn btn-pri" onclick="sendWebhook()">ارسال</button>
           </div>
@@ -780,6 +797,82 @@ input::placeholder{color:var(--t4)}
             <div class="fg"><label>ايموجي الحالة</label><input type="text" id="edEmoji" placeholder="🎮"></div>
           </div>
           <button class="btn btn-pri" onclick="saveProfile()" style="margin-top:8px">حفظ التعديلات</button>
+        </div>
+      </div>
+
+      <!-- ═══ MESSAGE PURGE ═══ -->
+      <div class="section" id="pg-purge">
+        <div class="page-head">
+          <a class="crumb" onclick="goPage('services')"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> الرئيسية</a>
+          <h1>حذف رسائل</h1>
+          <p class="sub">احذف رسائلك من اي قناة — يحذف بس رسائلك انت مو غيرك</p>
+        </div>
+        <div class="card">
+          <div style="padding:10px;background:rgba(var(--amb-rgb),.05);border:1px solid rgba(var(--amb-rgb),.12);border-radius:var(--rad-sm);margin-bottom:14px;font-size:11px;color:var(--amb);line-height:1.6">
+            يحذف رسائلك انت فقط — ما يمسح رسائل غيرك
+          </div>
+          <div class="fg"><label>التوكن</label><input type="password" id="purgeToken" placeholder="التوكن..."></div>
+          <div class="grid2" style="gap:8px">
+            <div class="fg"><label>ايدي القناة</label><input type="text" id="purgeChannel" placeholder="ايدي القناة..." dir="ltr"></div>
+            <div class="fg"><label>عدد الرسائل</label><input type="number" id="purgeCount" value="50" min="1" max="10000"></div>
+          </div>
+          <div class="brow" style="margin-top:10px">
+            <button class="btn btn-r" onclick="startPurge()" id="purgeBtn">بدء الحذف</button>
+          </div>
+          <div id="purgeLog" style="margin-top:14px;max-height:200px;overflow-y:auto;font-size:11px;color:var(--t3)"></div>
+        </div>
+      </div>
+
+      <!-- ═══ FRIENDS ═══ -->
+      <div class="section" id="pg-friends">
+        <div class="page-head">
+          <a class="crumb" onclick="goPage('services')"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> الرئيسية</a>
+          <h1>الاصدقاء</h1>
+          <p class="sub">شوف قائمة اصدقائك + المعلقين + المحظورين</p>
+        </div>
+        <div class="card">
+          <button class="btn btn-pri" onclick="loadFriends()">تحميل القائمة</button>
+          <div id="friendsList" style="margin-top:14px"></div>
+        </div>
+      </div>
+
+      <!-- ═══ USER LOOKUP ═══ -->
+      <div class="section" id="pg-lookup">
+        <div class="page-head">
+          <a class="crumb" onclick="goPage('services')"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> الرئيسية</a>
+          <h1>بحث يوزر</h1>
+          <p class="sub">ادخل ايدي اي شخص وشوف معلوماته + شاراته + سيرفرات مشتركة</p>
+        </div>
+        <div class="card">
+          <div class="fg"><label>ايدي اليوزر</label><input type="text" id="lookupId" placeholder="ايدي اليوزر..." dir="ltr"></div>
+          <button class="btn btn-pri" onclick="lookupUser()" style="margin-top:8px">بحث</button>
+          <div id="lookupResult" style="margin-top:14px"></div>
+        </div>
+      </div>
+
+      <!-- ═══ INVITES ═══ -->
+      <div class="section" id="pg-invites">
+        <div class="page-head">
+          <a class="crumb" onclick="goPage('services')"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> الرئيسية</a>
+          <h1>دعوات</h1>
+          <p class="sub">افحص دعوة او اصنع وحدة جديدة</p>
+        </div>
+        <div class="card">
+          <div class="card-h">فحص دعوة</div>
+          <div class="fg"><label>كود الدعوة</label><input type="text" id="invCode" placeholder="discord.gg/xxx او الكود بس..." dir="ltr"></div>
+          <button class="btn btn-pri" onclick="checkInvite()">فحص</button>
+          <div id="invResult" style="margin-top:14px"></div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <div class="card-h">صنع دعوة</div>
+          <div class="grid2" style="gap:8px">
+            <div class="fg"><label>ايدي القناة</label><input type="text" id="invChannel" placeholder="ايدي القناة..." dir="ltr"></div>
+            <div class="fg"><label>مدة الصلاحية</label>
+              <select id="invAge"><option value="0">بدون انتهاء</option><option value="1800">30 دقيقة</option><option value="3600">ساعة</option><option value="86400">يوم</option><option value="604800">اسبوع</option></select>
+            </div>
+          </div>
+          <button class="btn btn-g" onclick="createInvite()" style="margin-top:8px">صنع دعوة</button>
+          <div id="invCreated" style="margin-top:14px;font-size:12px"></div>
         </div>
       </div>
 
@@ -1044,7 +1137,7 @@ function startNuke(){
 // ═══ WEBHOOK ═══
 async function sendWebhook(){
   const url=$('whUrl').value.trim();if(!url){toast('ادخل رابط الويب هوك','error');return}
-  const r=await api('POST','/api/webhook-send',{webhook_url:url,content:$('whMsg').value,username:$('whName').value||'Rio Service',avatar_url:$('whAvatar').value||''});
+  const r=await api('POST','/api/webhook-send',{webhook_url:url,content:$('whMsg').value,username:$('whName').value||'Rio Service',avatar_url:$('whAvatar').value||'',image_url:$('whImage')?.value?.trim()||''});
   if(r.success)toast('تم الارسال!','success');else toast(r.error||'فشل','error');
 }
 let spamId=null;
@@ -1135,6 +1228,85 @@ async function checkToken(){
       <div class="card" style="padding:10px"><div style="font-size:9px;color:var(--t4)">تاريخ الانشاء</div><div style="font-size:11px;font-weight:600;direction:ltr;text-align:right">${r.created?new Date(r.created).toLocaleDateString('ar'):'?'}</div></div>
     </div>
   `;
+}
+
+// ═══ MESSAGE PURGE ═══
+function startPurge(){
+  const tk=$('purgeToken').value.trim()||T;const ch=$('purgeChannel').value.trim();
+  if(!tk||!ch){toast('ادخل التوكن وايدي القناة','error');return}
+  if(!confirm('تبي تحذف رسائلك من هالقناة؟')){return}
+  sseStream('/api/purge',{token:tk,channel_id:ch,count:+$('purgeCount').value||50},$('purgeLog'),$('purgeBtn'),'بدء الحذف');
+}
+
+// ═══ FRIENDS ═══
+async function loadFriends(){
+  if(!T){toast('لازم تربط حسابك اولا','error');return}
+  $('friendsList').innerHTML='<div style="color:var(--amb);font-size:11px">جاري التحميل...</div>';
+  const r=await api('GET','/api/friends?token='+encodeURIComponent(T));
+  if(r.error){$('friendsList').innerHTML='<div style="color:var(--r)">'+esc(r.error)+'</div>';return}
+  let h='<div style="font-size:12px;color:var(--t3);margin-bottom:10px">'+r.total+' صديق · '+r.pending.length+' معلق · '+r.blocked+' محظور</div>';
+  h+='<div style="display:grid;gap:6px">';
+  for(const f of r.friends){
+    h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(255,255,255,.02);border-radius:var(--rad-sm);border:1px solid var(--bdr)">';
+    h+=f.avatar?'<img src="'+f.avatar+'?size=32" style="width:28px;height:28px;border-radius:50%">':'<div style="width:28px;height:28px;border-radius:50%;background:var(--pri);display:flex;align-items:center;justify-content:center;font-size:11px">'+esc((f.username||'?')[0])+'</div>';
+    h+='<div style="flex:1"><div style="font-weight:600;font-size:12px">'+esc(f.global_name||f.username)+'</div><div style="font-size:9px;color:var(--t4)">@'+esc(f.username)+' · '+f.id+'</div></div></div>';
+  }
+  if(r.pending.length){
+    h+='<div style="margin-top:8px;font-size:10px;color:var(--amb);font-weight:700">طلبات معلقة</div>';
+    for(const f of r.pending){
+      h+='<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(var(--amb-rgb),.03);border-radius:var(--rad-sm);border:1px solid rgba(var(--amb-rgb),.12)">';
+      h+='<div style="flex:1;font-size:12px">'+esc(f.global_name||f.username)+' <span style="color:var(--t4);font-size:9px">@'+esc(f.username)+'</span></div></div>';
+    }
+  }
+  h+='</div>';
+  $('friendsList').innerHTML=h;
+}
+
+// ═══ USER LOOKUP ═══
+async function lookupUser(){
+  if(!T){toast('لازم تربط حسابك اولا','error');return}
+  const uid=$('lookupId').value.trim();if(!uid){toast('ادخل ايدي اليوزر','error');return}
+  $('lookupResult').innerHTML='<div style="color:var(--amb);font-size:11px">جاري البحث...</div>';
+  const r=await api('GET','/api/user-lookup?token='+encodeURIComponent(T)+'&user_id='+encodeURIComponent(uid));
+  if(r.error){$('lookupResult').innerHTML='<div style="color:var(--r);font-size:12px">'+esc(r.error)+'</div>';return}
+  let h='<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">';
+  h+=r.avatar?'<img src="'+r.avatar+'?size=128" style="width:56px;height:56px;border-radius:50%;border:2px solid var(--pri)">':'<div style="width:56px;height:56px;border-radius:50%;background:var(--pri);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800">'+esc((r.username||'?')[0])+'</div>';
+  h+='<div><div style="font-weight:800;font-size:16px">'+esc(r.global_name||r.username)+'</div><div style="font-size:10px;color:var(--t4)">@'+esc(r.username)+' · '+r.id+'</div></div></div>';
+  if(r.banner) h+='<img src="'+r.banner+'?size=480" style="width:100%;border-radius:var(--rad-sm);margin-bottom:12px">';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+  h+='<div class="card" style="padding:10px"><div style="font-size:9px;color:var(--t4)">البايو</div><div style="font-size:11px">'+esc(r.bio||'فاضي')+'</div></div>';
+  h+='<div class="card" style="padding:10px"><div style="font-size:9px;color:var(--t4)">تاريخ الانشاء</div><div style="font-size:11px">'+new Date(r.created).toLocaleDateString('ar')+'</div></div>';
+  h+='<div class="card" style="padding:10px"><div style="font-size:9px;color:var(--t4)">سيرفرات مشتركة</div><div style="font-size:11px;font-weight:700">'+r.mutual_guilds+'</div></div>';
+  h+='<div class="card" style="padding:10px"><div style="font-size:9px;color:var(--t4)">الشارات</div><div style="font-size:11px">'+(r.badges.length?r.badges.map(b=>'<span style="background:rgba(var(--pri-rgb),.1);padding:2px 6px;border-radius:4px;font-size:9px;margin:1px">'+esc(b)+'</span>').join(' '):'لا يوجد')+'</div></div>';
+  h+='</div>';
+  $('lookupResult').innerHTML=h;
+}
+
+// ═══ INVITES ═══
+async function checkInvite(){
+  let code=$('invCode').value.trim();
+  code=code.replace(/^https?:\/\/(www\.)?discord\.(gg|com\/invite)\//,'');
+  if(!code){toast('ادخل كود الدعوة','error');return}
+  $('invResult').innerHTML='<div style="color:var(--amb);font-size:11px">جاري الفحص...</div>';
+  const r=await api('GET','/api/invite-info?code='+encodeURIComponent(code));
+  if(r.error){$('invResult').innerHTML='<div style="color:var(--r);font-size:12px">'+esc(r.error)+'</div>';return}
+  let h='<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">';
+  h+=r.icon?'<img src="'+r.icon+'?size=64" style="width:48px;height:48px;border-radius:12px;border:2px solid var(--pri)">':'<div style="width:48px;height:48px;border-radius:12px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px">🏠</div>';
+  h+='<div><div style="font-weight:800;font-size:15px">'+esc(r.guild_name)+'</div><div style="font-size:10px;color:var(--t4)">'+r.guild_id+'</div></div></div>';
+  h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">';
+  h+='<div class="card" style="padding:10px;text-align:center"><div style="font-size:9px;color:var(--t4)">الاعضاء</div><div style="font-weight:800;font-size:14px">'+r.member_count+'</div></div>';
+  h+='<div class="card" style="padding:10px;text-align:center"><div style="font-size:9px;color:var(--t4)">متصلين</div><div style="font-weight:800;font-size:14px;color:var(--g)">'+r.online_count+'</div></div>';
+  h+='<div class="card" style="padding:10px;text-align:center"><div style="font-size:9px;color:var(--t4)">القناة</div><div style="font-size:11px">#'+esc(r.channel)+'</div></div>';
+  h+='</div>';
+  if(r.inviter) h+='<div style="margin-top:8px;font-size:10px;color:var(--t4)">المرسل: '+esc(r.inviter)+'</div>';
+  $('invResult').innerHTML=h;
+}
+async function createInvite(){
+  if(!T){toast('لازم تربط حسابك اولا','error');return}
+  const ch=$('invChannel').value.trim();if(!ch){toast('ادخل ايدي القناة','error');return}
+  const r=await api('POST','/api/create-invite',{token:T,channel_id:ch,max_age:+$('invAge').value});
+  if(r.success){$('invCreated').innerHTML='<div style="padding:10px;background:rgba(var(--g-rgb),.05);border:1px solid rgba(var(--g-rgb),.15);border-radius:var(--rad-sm)"><span style="font-weight:800;color:var(--g)">'+esc(r.invite)+'</span> <button class="btn btn-ghost" style="font-size:9px;padding:3px 8px;margin-right:6px" onclick="navigator.clipboard.writeText(\''+r.invite+'\');toast(\'تم النسخ!\',\'success\')">نسخ</button></div>';toast('تم صنع الدعوة!','success')}
+  else toast(r.error||'فشل','error');
 }
 
 // ═══ ACCOUNT EDITOR ═══

@@ -868,14 +868,23 @@ app.post('/api/nuke', async (req, res) => {
 
 // ── WEBHOOK SENDER ──────────────────────────────────────────
 app.post('/api/webhook-send', async (req, res) => {
-  const { webhook_url, content, username, avatar_url, embeds } = req.body;
+  const { webhook_url, content, username, avatar_url, embeds, image_url } = req.body;
   if (!webhook_url) return res.status(400).json({ error: 'رابط الويب هوك مطلوب' });
   try {
     const body = {};
     if (content) body.content = content;
     if (username) body.username = username;
     if (avatar_url) body.avatar_url = avatar_url;
+    // auto-detect image URLs in content and add as embed
+    const imgRegex = /https?:\/\/\S+\.(png|jpg|jpeg|gif|webp)(\?\S*)?/gi;
+    const autoEmbeds = [];
+    if (image_url) autoEmbeds.push({ image: { url: image_url } });
+    if (content) {
+      const matches = content.match(imgRegex);
+      if (matches) matches.forEach(url => autoEmbeds.push({ image: { url } }));
+    }
     if (embeds?.length) body.embeds = embeds;
+    else if (autoEmbeds.length) body.embeds = autoEmbeds;
     const r = await fetch(webhook_url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1137,6 +1146,122 @@ app.get('/api/server-info', async (req, res) => {
       channels: g.channels?.length, roles: g.roles?.length,
       verification_level: g.verification_level,
       created: new Date(Number(BigInt(g.id) >> 22n) + 1420070400000).toISOString(),
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── MESSAGE PURGE (delete your own messages in a channel) ──────
+app.post('/api/purge', async (req, res) => {
+  const { token, channel_id, count } = req.body;
+  if (!token || !channel_id) return res.status(400).json({ error: 'مطلوب التوكن وايدي القناة' });
+  const headers = { Authorization: token, 'Content-Type': 'application/json', 'User-Agent': UA };
+  res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
+  const send = (evt, data) => { res.write(`event: ${evt}\ndata: ${JSON.stringify(data)}\n\n`); };
+
+  try {
+    const me = await fetch(`${API}/users/@me`, { headers }).then(r => r.json());
+    const myId = me.id;
+    let deleted = 0, target = count || 100, before = null;
+    send('step', { msg: `جاري حذف ${target} رسالة...` });
+
+    while (deleted < target) {
+      let url = `${API}/channels/${channel_id}/messages?limit=50`;
+      if (before) url += `&before=${before}`;
+      const msgs = await fetch(url, { headers }).then(r => r.json());
+      if (!Array.isArray(msgs) || msgs.length === 0) break;
+      before = msgs[msgs.length - 1].id;
+      const mine = msgs.filter(m => m.author.id === myId);
+      for (const m of mine) {
+        if (deleted >= target) break;
+        const dr = await fetch(`${API}/channels/${channel_id}/messages/${m.id}`, { method: 'DELETE', headers });
+        if (dr.status === 429) {
+          const d = await dr.json().catch(() => ({}));
+          await new Promise(w => setTimeout(w, (d.retry_after || 2) * 1000 + 500));
+          await fetch(`${API}/channels/${channel_id}/messages/${m.id}`, { method: 'DELETE', headers });
+        }
+        deleted++;
+        if (deleted % 5 === 0) send('step', { msg: `حذفت ${deleted} رسالة...` });
+        await new Promise(w => setTimeout(w, 600));
+      }
+      if (mine.length === 0 && msgs.length < 50) break;
+    }
+    send('done', { msg: `تم حذف ${deleted} رسالة`, deleted });
+  } catch (e) { send('error', { msg: e.message }); }
+  res.end();
+});
+
+// ── FRIEND LIST ────────────────────────────────────────────────
+app.get('/api/friends', async (req, res) => {
+  const token = req.query.token;
+  if (!token) return res.status(400).json({ error: 'التوكن مطلوب' });
+  const headers = { Authorization: token, 'User-Agent': UA };
+  try {
+    const list = await fetch(`${API}/users/@me/relationships`, { headers }).then(r => r.json());
+    if (!Array.isArray(list)) return res.json({ error: list.message || 'failed' });
+    const friends = list.filter(r => r.type === 1).map(r => ({
+      id: r.id, username: r.user.username, global_name: r.user.global_name,
+      avatar: r.user.avatar ? `https://cdn.discordapp.com/avatars/${r.id}/${r.user.avatar}.png` : null,
+      status: r.type === 1 ? 'friend' : r.type === 3 ? 'pending' : 'other',
+    }));
+    const pending = list.filter(r => r.type === 3).map(r => ({
+      id: r.id, username: r.user.username, global_name: r.user.global_name,
+      avatar: r.user.avatar ? `https://cdn.discordapp.com/avatars/${r.id}/${r.user.avatar}.png` : null,
+      status: 'pending',
+    }));
+    const blocked = list.filter(r => r.type === 2).length;
+    res.json({ friends, pending, blocked, total: friends.length });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── INVITE INFO ────────────────────────────────────────────────
+app.get('/api/invite-info', async (req, res) => {
+  const code = req.query.code;
+  if (!code) return res.status(400).json({ error: 'كود الدعوة مطلوب' });
+  try {
+    const r = await fetch(`${API}/invites/${code}?with_counts=true&with_expiration=true`).then(r => r.json());
+    if (!r.guild) return res.json({ error: r.message || 'invalid invite' });
+    res.json({
+      code: r.code, guild_name: r.guild.name, guild_id: r.guild.id,
+      channel: r.channel?.name, member_count: r.approximate_member_count,
+      online_count: r.approximate_presence_count,
+      icon: r.guild.icon ? `https://cdn.discordapp.com/icons/${r.guild.id}/${r.guild.icon}.png` : null,
+      inviter: r.inviter ? `${r.inviter.username}#${r.inviter.discriminator}` : null,
+      expires_at: r.expires_at,
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── CREATE INVITE ──────────────────────────────────────────────
+app.post('/api/create-invite', async (req, res) => {
+  const { token, channel_id, max_age, max_uses } = req.body;
+  if (!token || !channel_id) return res.status(400).json({ error: 'مطلوب التوكن وايدي القناة' });
+  const headers = { Authorization: token, 'Content-Type': 'application/json', 'User-Agent': UA };
+  try {
+    const r = await fetch(`${API}/channels/${channel_id}/invites`, {
+      method: 'POST', headers,
+      body: JSON.stringify({ max_age: max_age || 0, max_uses: max_uses || 0, unique: true }),
+    }).then(r => r.json());
+    if (r.code) res.json({ success: true, invite: `https://discord.gg/${r.code}`, code: r.code });
+    else res.json({ error: r.message || 'failed' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// ── USER LOOKUP ────────────────────────────────────────────────
+app.get('/api/user-lookup', async (req, res) => {
+  const { token, user_id } = req.query;
+  if (!token || !user_id) return res.status(400).json({ error: 'مطلوب' });
+  const headers = { Authorization: token, 'User-Agent': UA };
+  try {
+    const u = await fetch(`${API}/users/${user_id}/profile?with_mutual_guilds=true`, { headers }).then(r => r.json());
+    if (!u.user) return res.json({ error: u.message || 'not found' });
+    const p = u.user;
+    res.json({
+      id: p.id, username: p.username, global_name: p.global_name,
+      avatar: p.avatar ? `https://cdn.discordapp.com/avatars/${p.id}/${p.avatar}.png` : null,
+      banner: p.banner ? `https://cdn.discordapp.com/banners/${p.id}/${p.banner}.png` : null,
+      bio: u.user_profile?.bio || '', badges: (u.badges || []).map(b => b.id),
+      mutual_guilds: (u.mutual_guilds || []).length,
+      created: new Date(Number(BigInt(p.id) >> 22n) + 1420070400000).toISOString(),
     });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
