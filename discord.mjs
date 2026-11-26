@@ -447,19 +447,29 @@ export class DiscordAccount {
     const quests = await this.getQuests();
     const toRun = quests.filter(q => questIds.includes(q.id) && q.is_active && !q.claimed);
     if (toRun.length === 0) { this._log('⚠ لا توجد مهام قابلة للتشغيل', 'warn'); return; }
-    this._log(`🚀 تشغيل ${toRun.length} مهمة بالتوازي ${turbo ? '(توربو ⚡)' : ''}`);
+    this._log(`🚀 تشغيل ${toRun.length} مهمة ${turbo ? '(توربو ⚡)' : ''}`);
     for (const q of toRun) {
       if (this._questRunners.has(q.id)) continue;
       const ctrl = { aborted: false };
       const promise = this._runQuest(q, ctrl, turbo);
       this._questRunners.set(q.id, { ctrl, promise });
+      // stagger enrollment to avoid rate limits
+      await new Promise(r => setTimeout(r, 3000));
     }
   }
 
-  // run ALL quests
+  // run ALL quests (only non-expired, active ones)
   async autoCompleteAll(turbo = false) {
     const quests = await this.getQuests();
-    const ids = quests.filter(q => q.is_active && !q.claimed).map(q => q.id);
+    const now = Date.now();
+    const ids = quests.filter(q => {
+      if (!q.is_active || q.claimed) return false;
+      // double-check expiry
+      if (q.expires_at && new Date(q.expires_at).getTime() < now) return false;
+      return true;
+    }).map(q => q.id);
+    if (ids.length === 0) { this._log('⚠ لا توجد مهام نشطة وغير منتهية', 'warn'); return; }
+    this._log(`🎯 ${ids.length} مهمة نشطة من أصل ${quests.length}`);
     await this.runQuests(ids, turbo);
   }
 
